@@ -14,7 +14,7 @@ function Dropdown:handleDropdown()
 		self.value = newValue
 		self.callback(self.value)
 
-		if (typeof(newValue) == "table" and self.multiple) then
+		if typeof(newValue) == "table" and self.multiple then
 			if self.multipleTable[1] == nil then
 				self.TextButton.Text = "None"
 			else
@@ -26,7 +26,7 @@ function Dropdown:handleDropdown()
 	end
 
 	local function setDefault(dropButton, value)
-		if table.find(self.default, value) then
+		if type(self.default) == "table" and table.find(self.default, value) or self.default == value then
 			self.tweenDropButtonOn(dropButton)
 
 			if not self.multiple then
@@ -42,7 +42,7 @@ function Dropdown:handleDropdown()
 		local function single()
 			for _, button in ipairs(self.DropButtons:GetChildren()) do
 				if button.Name == "DropButton" then
-					self.tweenDropButtonOff(button.TextButton)					
+					self.tweenDropButtonOff(button.TextButton)
 				end
 			end
 
@@ -73,7 +73,7 @@ function Dropdown:handleDropdown()
 
 	-- Create all drop buttons
 	for _, value in ipairs(self.list) do
-		local dropButton = self.createDropButton(value)	
+		local dropButton = self.createDropButton(value)
 		setDefault(dropButton, value)
 		dropButton.MouseButton1Down:Connect(choose(dropButton, value))
 	end
@@ -82,7 +82,7 @@ end
 function Dropdown:updateList(options: table)
 	for _, button in ipairs(self.DropButtons:GetChildren()) do
 		if button.Name == "DropButton" then
-			button:Destroy()				
+			button:Destroy()
 		end
 	end
 

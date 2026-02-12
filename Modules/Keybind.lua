@@ -32,7 +32,8 @@ local UserInputService = game:GetService('UserInputService')
 		self.TextButton.Text = "Changing..."
 	end)
 
-	local inputBegan = UserInputService.InputBegan:Connect(function(input)
+	local inputBegan = UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+		if gameProcessedEvent then return end
 		if (input.UserInputType == Enum.UserInputType.Keyboard or input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.MouseButton2) then
 			local inputName = input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode.Name or input.UserInputType.Name
 			
