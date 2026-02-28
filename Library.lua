@@ -407,8 +407,6 @@ function Library.new(options)
 	Library.Theme.Line = options.Line
 	Library.Title = options.title
 
-	UserIsPoor = getgenv().UserIsPoor == true
-
 	ScreenGui.Enabled = true
 
 	-- Intro animation: scale up with bounce
