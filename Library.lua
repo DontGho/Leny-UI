@@ -138,7 +138,7 @@ local Resize = Filler.Resize
 local Line = Filler.Line
 local Title = Tabs.Frame.Title
 
-UserIsPoor = false
+UserIsPoor = getgenv().UserIsPoor == true
 
 function Library:createTooltip()
 	if Library.TooltipInstance then
