@@ -138,11 +138,7 @@ local Resize = Filler.Resize
 local Line = Filler.Line
 local Title = Tabs.Frame.Title
 
-if not LPH_OBFUSCATED then
-    LRM_ScriptName = LRM_ScriptName or "dev"
-end
-
-UserIsPoor = getgenv().UserIsPoor == true
+UserIsPoor = false
 
 function Library:createTooltip()
 	if Library.TooltipInstance then
@@ -410,6 +406,8 @@ function Library.new(options)
 	Library.Theme.ScrollingBarImageColor = options.ScrollingBarImageColor
 	Library.Theme.Line = options.Line
 	Library.Title = options.title
+
+	UserIsPoor = getgenv().UserIsPoor == true
 
 	ScreenGui.Enabled = true
 
