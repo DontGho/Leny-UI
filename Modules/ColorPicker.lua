@@ -4,6 +4,7 @@ ColorPicker.__index = ColorPicker
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 
+print("ON")
 function ColorPicker.new(context: table)
 	local self = setmetatable(context, ColorPicker)
 	self.sliderDragging = false
@@ -50,7 +51,6 @@ function ColorPicker:handleColorPicker()
 	end)
 
 	RunService.RenderStepped:Connect(function()
-		print("ON")
 		if not self._inputDown then
 			return
 		end
