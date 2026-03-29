@@ -1,12 +1,15 @@
 local ColorPicker = {}
 ColorPicker.__index = ColorPicker
 
+-- updated
 local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
 
 function ColorPicker.new(context: table)
 	local self = setmetatable(context, ColorPicker)
 	self.sliderDragging = false
 	self.hsvDragging = false
+	self._inputDown = false
 	return self
 end
 
@@ -24,92 +27,55 @@ function ColorPicker:updateDragPositions()
 end
 
 function ColorPicker:handleColorPicker()
-	self:updateColor({color = self.color})
+	self:updateColor({ color = self.color })
 
-	local sliderDown = self.Slider.TextButton.MouseButton1Down:Connect(function()
+	self.Slider.TextButton.MouseButton1Down:Connect(function()
 		self.sliderDragging = true
+		self._inputDown = true
+	end)
 
-		local touchMoved = UserInputService.TouchMoved:Connect(function(input)
-			local percentX = math.clamp((input.Position.X - self.Slider.AbsolutePosition.X) / self.Slider.AbsoluteSize.X, 0, 1)
+	self.HSV.TextButton.MouseButton1Down:Connect(function()
+		self.hsvDragging = true
+		self._inputDown = true
+	end)
+
+	UserInputService.InputEnded:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			self.sliderDragging = false
+			self.hsvDragging = false
+			self._inputDown = false
+		end
+	end)
+
+	RunService.RenderStepped:Connect(function()
+		if not self._inputDown then
+			return
+		end
+
+		local mousePos = UserInputService:GetMouseLocation()
+
+		if self.sliderDragging then
+			local percentX = math.clamp(
+				(mousePos.X - self.Slider.AbsolutePosition.X) / self.Slider.AbsoluteSize.X, 0, 1
+			)
 			self.H = percentX
 			self.Slider.Drag.Position = UDim2.new(percentX, 0, 0.5, 0)
 			self:updateAssetsColors()
-		end)
+		end
 
-		local touchEnded; touchEnded = UserInputService.TouchEnded:Connect(function()
-			touchMoved:Disconnect()
-			touchEnded:Disconnect()
-			self.sliderDragging = false
-		end)
-
-		local inputChanged = UserInputService.InputChanged:Connect(function(input)
-			if self.sliderDragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-				local percentX = math.clamp((input.Position.X - self.Slider.AbsolutePosition.X) / self.Slider.AbsoluteSize.X, 0, 1)
-				self.H = percentX
-				self.Slider.Drag.Position = UDim2.new(percentX, 0, 0.5, 0)
-				self:updateAssetsColors()
-			end
-		end)
-
-		local inputEnded; inputEnded = UserInputService.InputEnded:Connect(function(input)
-			if input.UserInputType == Enum.UserInputType.MouseButton1 then
-				inputChanged:Disconnect()
-				inputEnded:Disconnect()
-				self.sliderDragging = false
-			end
-		end)
-
-		table.insert(self.Connections, touchMoved)
-		table.insert(self.Connections, touchEnded)
-		table.insert(self.Connections, inputChanged)
-		table.insert(self.Connections, inputEnded)
-	end)
-
-	local hsvDown = self.HSV.TextButton.MouseButton1Down:Connect(function()
-		self.hsvDragging = true
-
-		local touchMoved = UserInputService.TouchMoved:Connect(function(input)
-			local percentX = math.clamp((input.Position.X - self.HSV.AbsolutePosition.X) / self.HSV.AbsoluteSize.X, 0, 1)
-			local percentY = math.clamp((input.Position.Y - self.HSV.AbsolutePosition.Y) / self.HSV.AbsoluteSize.Y, 0, 1)
+		if self.hsvDragging then
+			local percentX = math.clamp(
+				(mousePos.X - self.HSV.AbsolutePosition.X) / self.HSV.AbsoluteSize.X, 0, 1
+			)
+			local percentY = math.clamp(
+				(mousePos.Y - self.HSV.AbsolutePosition.Y) / self.HSV.AbsoluteSize.Y, 0, 1
+			)
 			self.S = percentX
 			self.V = 1 - percentY
 			self:updateAssetsColors()
 			self:updateDragPositions()
-		end)
-
-		local touchEnded; touchEnded = UserInputService.TouchEnded:Connect(function()
-			touchMoved:Disconnect()
-			touchEnded:Disconnect()
-			self.hsvDragging = false
-		end)
-
-		local inputChanged = UserInputService.InputChanged:Connect(function(input)
-			if self.hsvDragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-				local percentX = math.clamp((input.Position.X - self.HSV.AbsolutePosition.X) / self.HSV.AbsoluteSize.X, 0, 1)
-				local percentY = math.clamp((input.Position.Y - self.HSV.AbsolutePosition.Y) / self.HSV.AbsoluteSize.Y, 0, 1)
-				self.S = percentX
-				self.V = 1 - percentY
-				self:updateAssetsColors()
-				self:updateDragPositions()
-			end
-		end)
-
-		local inputEnded; inputEnded = UserInputService.InputEnded:Connect(function(input)
-			if input.UserInputType == Enum.UserInputType.MouseButton1 then
-				inputChanged:Disconnect()
-				inputEnded:Disconnect()
-				self.hsvDragging = false
-			end
-		end)
-
-		table.insert(self.Connections, touchMoved)
-		table.insert(self.Connections, touchEnded)
-		table.insert(self.Connections, inputChanged)
-		table.insert(self.Connections, inputEnded)
+		end
 	end)
-
-	table.insert(self.Connections, sliderDown)
-	table.insert(self.Connections, hsvDown)
 
 	self.Hex.FocusLost:Connect(function()
 		if string.match(self.Hex.Text, "^%x%x%x%x%x%x$") then
