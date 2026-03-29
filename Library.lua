@@ -105,7 +105,7 @@ local Modules = {
 	)(),
 	ColorPicker = loadstring(
 		game:HttpGet(
-			`https://raw.githubusercontent.com/Grayy12/Leny-UI/refs/heads/{TESTING and "testing" or "main"}/Modules/ColorPicker.lua`,
+			`https://raw.githubusercontent.com/DontGHo/Leny-UI/refs/heads/{TESTING and "testing" or "main"}/Modules/ColorPicker.lua`,
 			true
 		)
 	)(),
