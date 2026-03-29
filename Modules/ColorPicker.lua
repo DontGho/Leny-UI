@@ -1,10 +1,10 @@
 local ColorPicker = {}
 ColorPicker.__index = ColorPicker
 
--- updated
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 
+print("updated 3")
 function ColorPicker.new(context: table)
 	local self = setmetatable(context, ColorPicker)
 	self.sliderDragging = false
@@ -40,7 +40,10 @@ function ColorPicker:handleColorPicker()
 	end)
 
 	UserInputService.InputEnded:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		if
+			input.UserInputType == Enum.UserInputType.MouseButton1
+			or input.UserInputType == Enum.UserInputType.Touch
+		then
 			self.sliderDragging = false
 			self.hsvDragging = false
 			self._inputDown = false
@@ -55,21 +58,16 @@ function ColorPicker:handleColorPicker()
 		local mousePos = UserInputService:GetMouseLocation()
 
 		if self.sliderDragging then
-			local percentX = math.clamp(
-				(mousePos.X - self.Slider.AbsolutePosition.X) / self.Slider.AbsoluteSize.X, 0, 1
-			)
+			local percentX =
+				math.clamp((mousePos.X - self.Slider.AbsolutePosition.X) / self.Slider.AbsoluteSize.X, 0, 1)
 			self.H = percentX
 			self.Slider.Drag.Position = UDim2.new(percentX, 0, 0.5, 0)
 			self:updateAssetsColors()
 		end
 
 		if self.hsvDragging then
-			local percentX = math.clamp(
-				(mousePos.X - self.HSV.AbsolutePosition.X) / self.HSV.AbsoluteSize.X, 0, 1
-			)
-			local percentY = math.clamp(
-				(mousePos.Y - self.HSV.AbsolutePosition.Y) / self.HSV.AbsoluteSize.Y, 0, 1
-			)
+			local percentX = math.clamp((mousePos.X - self.HSV.AbsolutePosition.X) / self.HSV.AbsoluteSize.X, 0, 1)
+			local percentY = math.clamp((mousePos.Y - self.HSV.AbsolutePosition.Y) / self.HSV.AbsoluteSize.Y, 0, 1)
 			self.S = percentX
 			self.V = 1 - percentY
 			self:updateAssetsColors()
