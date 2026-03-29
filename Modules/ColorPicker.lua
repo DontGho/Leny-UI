@@ -4,7 +4,7 @@ ColorPicker.__index = ColorPicker
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 
-print("updated 3")
+print("UPDATED 3")
 function ColorPicker.new(context: table)
 	local self = setmetatable(context, ColorPicker)
 	self.sliderDragging = false
